@@ -3,7 +3,7 @@ bin/
 obj/
 
 # User-specific secrets
-appsettings.json
+appsettings.*.json
 appsettings.Development.json
 appsettings.json.example
 
