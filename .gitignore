@@ -1,0 +1,20 @@
+# Build outputs
+bin/
+obj/
+
+# User-specific secrets
+appsettings.json
+appsettings.Development.json
+appsettings.json.example
+
+# Uploaded resume files (user data, not for VCS)
+wwwroot/uploads/*.pdf
+wwwroot/uploads/*.docx
+
+# IDE
+.vs/
+*.user
+
+# dotnet secrets
+secrets.json
+.env

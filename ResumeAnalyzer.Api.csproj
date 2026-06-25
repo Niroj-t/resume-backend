@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>ResumeAnalyzer.Api</RootNamespace>
+    <UserSecretsId>4412a1d5-738d-4382-8f1e-b22681011e49</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- EF Core + PostgreSQL provider.
+         "8.0.*" pins the major.minor to EF Core 8 (matching .NET 8) while
+         always restoring the latest 8.0.x patch release — avoids this
+         file going stale with a hardcoded patch number. -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.*" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.*">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.*" />
+
+    <!-- JWT authentication -->
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.*" />
+    <!-- PasswordHasher<T> lives here — not included in the Sdk.Web shared
+         framework by default, so it must be referenced explicitly. -->
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="8.0.*" />
+
+    <!-- Swagger / OpenAPI -->
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.1" />
+
+    <!-- Resume text extraction -->
+    <PackageReference Include="PdfPig" Version="0.1.14" />
+    <PackageReference Include="DocumentFormat.OpenXml" Version="3.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\uploads\" />
+  </ItemGroup>
+
+</Project>
