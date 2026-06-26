@@ -27,7 +27,7 @@
     <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="8.0.*" />
 
     <!-- Swagger / OpenAPI -->
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
 
     <!-- Resume text extraction -->
     <PackageReference Include="PdfPig" Version="0.1.14" />
