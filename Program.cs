@@ -164,14 +164,13 @@ var app = builder.Build();
 // Middleware pipeline
 // ---------------------------------------------------------------------
 
-if (app.Environment.IsDevelopment())
+// Swagger available in all environments so the live API on Render is browsable.
+// Remove or gate this behind IsDevelopment() before making the API truly public.
+app.UseSwagger();
+app.UseSwaggerUI(options =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(options =>
-    {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Resume Analyzer API v1");
-    });
-}
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Resume Analyzer API v1");
+});
 
 //app.UseHttpsRedirection();
 
