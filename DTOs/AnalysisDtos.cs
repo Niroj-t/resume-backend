@@ -1,6 +1,17 @@
 namespace ResumeAnalyzer.Api.DTOs;
 
 /// <summary>
+/// Form DTO for POST /api/analyze. Using a dedicated DTO (rather than
+/// individual [FromForm] parameters) is required by Swashbuckle v6 when
+/// mixing IFormFile with other form fields — see Swashbuckle docs.
+/// </summary>
+public class AnalyzeRequestDto
+{
+    public IFormFile? Resume { get; set; }
+    public string? JobDescription { get; set; }
+}
+
+/// <summary>
 /// Response DTO returned by POST /api/analyze and GET /api/analysis/{id}.
 /// Intentionally mirrors the shape the Next.js frontend's AnalysisResult
 /// type expects, so the frontend can consume it with minimal mapping.

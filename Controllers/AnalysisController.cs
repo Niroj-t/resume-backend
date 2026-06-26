@@ -31,9 +31,7 @@ public class AnalysisController : ControllerBase
     [ProducesResponseType(typeof(AnalysisResultDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<AnalysisResultDto>> Analyze(
-        [FromForm] IFormFile? resume,
-        [FromForm] string? jobDescription)
+    public async Task<ActionResult<AnalysisResultDto>> Analyze([FromForm] AnalyzeRequestDto request)
     {
         var userId = User.GetUserId();
         if (userId is null)
@@ -46,7 +44,7 @@ public class AnalysisController : ControllerBase
             // Validation (including the null-file check) happens inside the
             // orchestrator/validator, so a null `resume` is handled safely
             // and turned into a 400 via FileValidationException below.
-            var result = await _orchestrator.AnalyzeAndSaveAsync(userId.Value, resume, jobDescription ?? string.Empty);
+            var result = await _orchestrator.AnalyzeAndSaveAsync(userId.Value, request.Resume, request.JobDescription ?? string.Empty);
             return Ok(result);
         }
         catch (FileValidationException ex)
