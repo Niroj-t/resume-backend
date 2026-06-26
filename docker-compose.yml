@@ -1,0 +1,50 @@
+services:
+
+  # ── PostgreSQL ──────────────────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: AIResumeDB
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d AIResumeDB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # Expose to localhost only (remove or tighten in production)
+    ports:
+      - "5432:5432"
+
+  # ── Resume Analyzer API ─────────────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      # .NET config maps ":" → "__" for environment variables
+      ConnectionStrings__DefaultConnection: >-
+        Host=db;Port=5432;Database=AIResumeDB;Username=postgres;Password=${POSTGRES_PASSWORD}
+      Jwt__Secret: ${JWT_SECRET}
+      Jwt__Issuer: ResumeAnalyzer.Api
+      Jwt__Audience: ResumeAnalyzer.Client
+      Gemini__ApiKey: ${GEMINI_API_KEY}
+      Gemini__Model: gemini-2.5-flash
+      Cors__AllowedOrigins__0: ${FRONTEND_ORIGIN:-http://localhost:3000}
+      ASPNETCORE_ENVIRONMENT: Production
+    volumes:
+      # Persist uploaded resume files across container restarts
+      - uploads_data:/app/wwwroot/uploads
+
+volumes:
+  postgres_data:
+  uploads_data:
