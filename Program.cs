@@ -149,12 +149,18 @@ builder.Services.AddSwaggerGen(options =>
 
     options.AddSecurityDefinition("Bearer", securityScheme);
 
-    // Swashbuckle v10 changed AddSecurityRequirement to take a delegate
-    // (Func<OpenApiDocument, OpenApiSecurityRequirement>) so the security
-    // scheme reference can resolve against the document being built.
-   options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
-        [new OpenApiSecuritySchemeReference("Bearer", document)] = new List<string>(),
+        [
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer",
+                }
+            }
+        ] = new List<string>(),
     });
 });
 
