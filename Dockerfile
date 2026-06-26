@@ -1,29 +1,27 @@
-# ── Build stage ──────────────────────────────────────────────────────────────
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+# ── Build stage ───────────────────────────────────────────────────────────────
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
 WORKDIR /src
 
-# Restore dependencies first (layer-cached unless .csproj changes)
 COPY ResumeAnalyzer.Api.csproj .
-RUN dotnet restore
+RUN dotnet restore -r linux-musl-x64
 
-# Copy everything else and publish
 COPY . .
-RUN dotnet publish -c Release -o /app/publish --no-restore
+RUN dotnet publish -c Release -o /app/publish -r linux-musl-x64 --self-contained false --no-restore
 
 # ── Runtime stage ─────────────────────────────────────────────────────────────
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS runtime
 WORKDIR /app
 
-# Create the uploads directory (mounted as a volume in production)
+# Reduce GC memory pressure — critical on Render free tier (512 MB RAM)
+ENV DOTNET_GCHeapHardLimit=402653184
+ENV DOTNET_GCConserveMemory=9
+ENV DOTNET_TieredCompilation=0
+
 RUN mkdir -p wwwroot/uploads
 
-# Copy published output from build stage
 COPY --from=build /app/publish .
 
-# Expose HTTP port (HTTPS is terminated at the reverse-proxy / load-balancer)
 EXPOSE 8080
-
-# ASP.NET Core listens on 8080 inside the container
 ENV ASPNETCORE_URLS=http://+:8080
 ENV ASPNETCORE_ENVIRONMENT=Production
 
